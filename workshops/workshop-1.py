@@ -126,6 +126,9 @@ user_input = input()
 
 blockchain = []
 
+#todo: add logic that adds the hash and previous hash to the block
+# also add logic that checks for the index
+
 match user_input:
     case '1':
         blockchain = load_blockchain(BLOCKCHAIN_FILENAME)
