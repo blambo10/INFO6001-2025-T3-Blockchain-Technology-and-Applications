@@ -10,7 +10,7 @@ class Block:
         self.proof = proof
         self.hash = self.calculate_hash()
 
-    def calculate_hash(self):
+    def calculate_hash(self, d):
         # TODO: Implement the hash calculation for the block
         # Hint: Combine all block attributes into a string and hash it using SHA-256
         pass
