@@ -7,18 +7,20 @@ BLOCKCHAIN_FILENAME = 'blockchain.json'
 def calculate_hash(data):
     return hashlib.sha512(data.encode('utf-8')).hexdigest()
 
-# print(calculate_hash("Blockchain"))
-
 def create_genesis_block():
-    genesis_hash_content = '0'
-    genesis_message = 'Genesis Block'
+    genesis_previous_hash_data = calculate_hash('0')
+    time_stamp = int(time.time())
+    genesis_data = 'Genesis Block'
     proof_of_value = 0
+    hash_data = f"{genesis_previous_hash_data}{time_stamp}{genesis_data}{str(proof_of_value)}"
+    block_hash = calculate_hash(hash_data)
 
     genesis_block = {
         'index': 0,
         'timestamp': int(time.time()),
-        'previous_hash': calculate_hash(genesis_hash_content),
-        'data': genesis_message,
+        'previous_hash': calculate_hash(genesis_previous_hash_data),
+        'hash': block_hash,
+        'data': genesis_data,
         'proof_of_value': proof_of_value
     }
     return genesis_block
@@ -32,68 +34,77 @@ def get_latest_item(items):
     else:
         return "List is empty"
 
-# print(get_latest_item([1]))
-# print(get_latest_item([]))
-
-def add_entry(chain, new_entry):
-    if type(chain) != list:
+def add_entry(blockchain, new_block):
+    if type(blockchain) != list:
         raise TypeError("chain must be a list")
 
-    if type(new_entry) != dict:
+    if type(new_block) != dict:
         raise TypeError("new_entry must be a dict")
 
-    chain.append(new_entry)
-    return chain
+    current_index = blockchain[-1]['index'] + 1
 
-# blockchain = [{'index': 0,
-#                'data': 'Genesis Block'}]
-# new_block = {'index': 1, 'data': 'New Block'}
+    previous_hash = blockchain[-1]['hash']
 
-# print(add_entry(blockchain, new_block))
+    proof_of_value, current_hash = get_proof_of_work(new_block['data'],
+                                            [block['proof_of_value'] for block in blockchain])
+
+    new_block_enriched = {
+        'index': current_index,
+        'timestamp': int(time.time()),
+        'previous_hash': previous_hash,
+        'hash': current_hash,
+        'proof_of_value': proof_of_value,
+        **new_block
+    }
+
+    blockchain.append(new_block_enriched)
+    return blockchain
 
 def is_valid_proof(data, proof):
     hash_data = f"{data}{proof}"
-    proof_hash = hashlib.sha512(hash_data.encode('utf-8')).hexdigest()
+    proof_hash = calculate_hash(hash_data)
     if proof_hash.startswith('0000'):
         return True
     else:
         return False
 
-# print(is_valid_proof("test", 1234))
+def get_proof_of_work(data, existing_proof_of_values = []):
+    valid_proof = False
 
-def proof_of_work():
-    proof = 0
-    data = 'test'
+    if len(existing_proof_of_values) > 0:
+        proof_value = existing_proof_of_values[len(existing_proof_of_values)-1] + 1
+        #TODO: continue here
+    else:
+        proof_value = 0
 
-    while is_valid_proof(data, proof) is False:
-        proof += 1
+    while valid_proof is False:
+        print('checking for valid proof')
+        if is_valid_proof(data, proof_value) and proof_value not in existing_proof_of_values:
+            print('found valid proof')
+            break
 
-    return proof
+        proof_value += 1
 
-# print(proof_of_work())
+    hash_data = f"{data}{proof_value}"
+    current_hash = calculate_hash(hash_data)
 
-def validate_blocks(blocks):
-    for i, block in enumerate(blocks):
+    return proof_value, current_hash
+
+def validate_blocks(blockchain):
+    for i, block in enumerate(blockchain):
         if i == 0:
             continue
 
         if 'previous_hash' not in block:
             return False
 
-        if 'hash' not in blocks[i-1]:
+        if 'hash' not in blockchain[i-1]:
             return False
 
-        if block['previous_hash'] != blocks[i-1]['hash']:
+        if block['previous_hash'] != blockchain[i-1]['hash']:
             return False
 
     return True
-
-# blockchain = [
-#     {"index": 0, "hash": "abcd"},
-#     {"index": 1, "previous_hash": "abcd", "hash": "efgh"},
-#     {"index": 2, "previous_hash": "efgh", "hash": "ijkl"}
-# ]
-# print(validate_blocks(blockchain))
 
 def save_blockchain(blockchain, filename):
     formatted_json = json.dumps(blockchain, indent=4)
@@ -108,10 +119,6 @@ def load_blockchain(filename):
         return blockchain
     except FileNotFoundError:
         return None
-
-# blockchain = [{"index": 0, "data": "Genesis Block"}]
-# save_blockchain(blockchain, "blockchain.json")
-# print(load_blockchain("blockchain.json"))
 
 # Blockchain Menu Example
 print("\n=== Blockchain Menu ===")
@@ -142,7 +149,7 @@ match user_input:
         if blockchain is None:
             print(f"{BLOCKCHAIN_FILENAME} not found")
             exit(2)
-        new_block = {'index': 1, 'data': 'New Block'}
+        new_block = {'data': 'New Block'}
         add_entry(blockchain, new_block)
         save_blockchain(blockchain, BLOCKCHAIN_FILENAME)
     case '3':
