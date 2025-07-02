@@ -1,6 +1,7 @@
 import hashlib
 import time
 import json
+import re
 
 BLOCKCHAIN_FILENAME = 'blockchain.json'
 
@@ -106,6 +107,22 @@ def validate_blocks(blockchain):
 
     return True
 
+def calculate_chain_difficulty(blockchain):
+    regex = '^0+'
+    total_sum = 0
+    blockchain_hash_zeros = []
+
+    for block in blockchain:
+
+        search = re.search(regex, block['hash'])
+
+        if search:
+            leading_zeros_count = len(search.group(0))
+            total_sum += leading_zeros_count
+            blockchain_hash_zeros.append(leading_zeros_count)
+
+    return total_sum / len(blockchain_hash_zeros)
+
 def save_blockchain(blockchain, filename):
     formatted_json = json.dumps(blockchain, indent=4)
 
@@ -127,7 +144,8 @@ print("2. Add a new block")
 print("3. Get Latest Block")
 print("4. Display the blockchain")
 print("5. Validate the blockchain")
-print("6. Exit")
+print("6. Check difficulty")
+print("7. Exit")
 
 user_input = input()
 
@@ -174,6 +192,13 @@ match user_input:
 
         print(validate_blocks(blockchain))
     case '6':
+        blockchain = load_blockchain(BLOCKCHAIN_FILENAME)
+        if blockchain == None:
+            print(f"{BLOCKCHAIN_FILENAME} not found")
+            exit(2)
+
+        print(calculate_chain_difficulty(blockchain))
+    case '7':
         print('Exiting')
         exit(0)
     case _:  # The underscore acts as a wildcard, similar to a default case
