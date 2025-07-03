@@ -2,6 +2,9 @@ import hashlib
 import time
 import json
 import re
+import logging
+
+log = logging
 
 BLOCKCHAIN_FILENAME = 'blockchain.json'
 
@@ -123,6 +126,25 @@ def calculate_chain_difficulty(blockchain):
 
     return total_sum / len(blockchain_hash_zeros)
 
+def is_chain_sorted_by_timestamp(blockchain):
+    chain_valid = True
+
+    for i, block in enumerate(blockchain):
+        if i == 0:
+            continue
+
+        if 'timestamp' not in block:
+            log.error(f"Block {i} has no timestamp")
+            chain_valid = False
+            break
+
+        if blockchain[i-1]['timestamp'] > block['timestamp']:
+            log.error(f"Block {i} has greater timestamp than block {i-1}")
+            chain_valid = False
+            break
+
+    return chain_valid
+
 def save_blockchain(blockchain, filename):
     formatted_json = json.dumps(blockchain, indent=4)
 
@@ -145,14 +167,12 @@ print("3. Get Latest Block")
 print("4. Display the blockchain")
 print("5. Validate the blockchain")
 print("6. Check difficulty")
-print("7. Exit")
+print("7. Verify block ordered by timestamp")
+print("8. Exit")
 
 user_input = input()
 
 blockchain = []
-
-#todo: add logic that adds the hash and previous hash to the block
-# also add logic that checks for the index
 
 match user_input:
     case '1':
@@ -199,6 +219,13 @@ match user_input:
 
         print(calculate_chain_difficulty(blockchain))
     case '7':
+        blockchain = load_blockchain(BLOCKCHAIN_FILENAME)
+        if blockchain == None:
+            print(f"{BLOCKCHAIN_FILENAME} not found")
+            exit(2)
+
+        print(is_chain_sorted_by_timestamp(blockchain))
+    case '8':
         print('Exiting')
         exit(0)
     case _:  # The underscore acts as a wildcard, similar to a default case
