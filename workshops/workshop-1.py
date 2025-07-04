@@ -9,7 +9,7 @@ log = logging
 BLOCKCHAIN_FILENAME = 'blockchain.json'
 
 def calculate_hash(data):
-    return hashlib.sha512(data.encode('utf-8')).hexdigest()
+    return hashlib.sha256(data.encode('utf-8')).hexdigest()
 
 def create_genesis_block():
     genesis_previous_hash_data = calculate_hash('0')
