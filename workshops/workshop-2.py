@@ -1,6 +1,11 @@
+from datetime import datetime
 import hashlib
 import time
 import asyncio
+import logging
+
+log = logging
+
 
 # Compute Merkle Root using recursion
 
@@ -43,7 +48,7 @@ tnx = [
 
 # Simulate Proof Of Work
 
-async def is_valid_proof(data, proof, difficulty):
+def is_valid_proof(data, proof, difficulty):
     hash_data = f"{data}{proof}"
     proof_hash = sha256(hash_data)
     if proof_hash.startswith(difficulty):
@@ -52,16 +57,14 @@ async def is_valid_proof(data, proof, difficulty):
         return False
 
 async def mine_block(miner, block_data, difficulty):
-    """TODO: Simulate mining by finding a nonce that satisfies the difficulty."""
+    """TODO: ¸Simulate mining by finding a nonce that satisfies the difficulty."""
     difficulty = difficulty * '0'
     start_time = time.perf_counter()
     valid_proof = False
     nonce = 0
 
     while valid_proof is False:
-        print('checking for valid proof')
         if is_valid_proof(block_data, nonce, difficulty):
-            print('found valid proof')
             break
 
         nonce += 1
@@ -72,33 +75,42 @@ async def mine_block(miner, block_data, difficulty):
     end_time = time.perf_counter()
     time_taken = end_time - start_time
 
-    return [miner, nonce, current_hash, time_taken]
+    current_epoch_time = time.time()
+    return [miner, nonce, current_hash, current_epoch_time]
 
 
 async def simulate_pow(miners, block_data, difficulty):
-    """TODO: Simulate Proof of Work with multiple miners."""
 
-    # create all tasks
+    start_time = time.perf_counter()
+
+    # log.info(f"Simulating Proof of Work - Starting {miners} Blockchain Miners")
+    print(f"Simulating Proof of Work")
+    print(f"Starting {miners} Blockchain Miners")
+    print(f"Difficulty: {difficulty}")
+    print(f"Block Data: {block_data}")
+
     working_miners = [asyncio.create_task(mine_block(i, block_data, difficulty)) for i in range(miners)]
-    # wait for all tasks to complete concurrently
     await asyncio.wait(working_miners)
-
-    print(working_miners)
-    print(working_miners[0].result())
-    # exit(0)
 
     working_miners.sort(key=lambda miner: miner.result()[3])
 
     winner = working_miners[0].result()
 
+    end_time = time.perf_counter()
+    time_taken = end_time - start_time
     print(f"\nMiner {winner[0]} found the solution first!")
     print(f"Nonce: {winner[1]}")
     print(f"Block Hash: {winner[2]}")
-    print(f"Time Taken: {winner[3]:.2f} seconds")
+    print(f"Time Finished: {winner[3]:.2f} seconds")
+    # print(f"Finish time: {winner[4]} seconds")
+
+    print(f"Finish time of slower other miners: {working_miners[1].result()[3]} {working_miners[2].result()[3]} {working_miners[3].result()[3]}")
+
+    print(f"overall time taken {time_taken}")
 
 # Example Usage
-miners = 5  # Number of miners
+miners = 6  # Number of miners
 block_data = "Block Data"  # Data to be included in the block
-difficulty = 4  # Number of leading zeros required
+difficulty = 6  # Number of leading zeros required
 
 asyncio.run(simulate_pow(miners, block_data, difficulty))
