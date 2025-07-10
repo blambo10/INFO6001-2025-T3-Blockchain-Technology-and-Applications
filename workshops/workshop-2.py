@@ -3,9 +3,10 @@ import hashlib
 import time
 import asyncio
 import logging
+import random
+import json
 
 log = logging
-
 
 # Compute Merkle Root using recursion
 
@@ -109,8 +110,50 @@ async def simulate_pow(miners, block_data, difficulty):
     print(f"overall time taken {time_taken}")
 
 # Example Usage
-miners = 6  # Number of miners
-block_data = "Block Data"  # Data to be included in the block
-difficulty = 6  # Number of leading zeros required
+# miners = 6  # Number of miners
+# block_data = "Block Data"  # Data to be included in the block
+# difficulty = 6  # Number of leading zeros required
+#
+# asyncio.run(simulate_pow(miners, block_data, difficulty))
 
-asyncio.run(simulate_pow(miners, block_data, difficulty))
+# Simulate Proof Of Work
+
+TOTAL_TOKENS = 5000
+
+def get_validators_stakes(validators):
+    for i, validator in enumerate(validators):
+        # print(validator)
+        stake = (validators[validator] / TOTAL_TOKENS) * 100
+        print(stake)
+        validators[validator] = stake
+
+def select_validator(validators):
+    selected_validator = random.choices(list(validators.keys()),
+                                        weights=validators.values(),
+                                        k=1)[0]
+    return selected_validator
+
+def simulate_pos(validators):
+    start_time = time.perf_counter()
+    get_validators_stakes(validators)
+    selected_validator = select_validator(validators)
+    end_time = time.perf_counter()
+
+    time_taken = end_time - start_time
+
+    print("Validators and their stakes:")
+    print(json.dumps(validators, indent=4))
+
+    print(f"\nValidator {selected_validator} has been chosen to create the next block!")
+
+    print(f"Overall Time Taken: {time_taken}")
+
+# Example Usage
+validators = {
+    "Alice": 100,
+    "Bob": 50,
+    "Charlie": 200,
+    "Diana": 75
+}
+
+simulate_pos(validators)
