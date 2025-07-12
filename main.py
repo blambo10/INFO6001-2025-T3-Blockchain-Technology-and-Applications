@@ -1,8 +1,12 @@
 import hashlib
 import time
+import logging
+from const import GENESIS_BLOCK_PREVIOUS_HASH_INPUT
+
+log = logging
 
 class Block:
-    def __init__(self, index, timestamp, data, proof, previous_hash=None):
+    def __init__(self, index, previous_hash, timestamp, data, proof):
         self.index = index
         self.previous_hash = previous_hash
         self.timestamp = timestamp
@@ -10,19 +14,29 @@ class Block:
         self.proof = proof
         self.hash = self.calculate_hash()
 
-    def calculate_hash(self, d):
+    def calculate_hash(self):
         # TODO: Implement the hash calculation for the block
-        # Hint: Combine all block attributes into a string and hash it using SHA-256
-        pass
-
+        hash_data = f"{self.index}{self.previous_hash}{self.timestamp}{self.data}{str(self.proof)}"
+        return hashlib.sha256(hash_data.encode('utf-8')).hexdigest()
 
 class Blockchain:
     def __init__(self):
+        self.genisis_data = 'gensisis block'
         self.chain = [self.create_genesis_block()]
         self.difficulty = 4  # Number of leading zeros required in the hash
 
     def create_genesis_block(self):
-        genesis_block = Block(0, 'Genesis Block', '0', b'', 0)
+        try:
+            previous_hash = hashlib.sha256(GENESIS_BLOCK_PREVIOUS_HASH_INPUT.encode('utf-8')).hexdigest()
+
+            return Block(0,
+                         previous_hash,
+                         int(time.time()),
+                        self.genisis_data,
+                    0,
+                    )
+        except Exception as e:
+            log.error(e)
 
         genesis_previous_hash_data = calculate_hash('0')
         time_stamp = int(time.time())
