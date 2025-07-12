@@ -2,7 +2,7 @@ import hashlib
 import time
 
 class Block:
-    def __init__(self, index, previous_hash, timestamp, data, proof):
+    def __init__(self, index, timestamp, data, proof, previous_hash=None):
         self.index = index
         self.previous_hash = previous_hash
         self.timestamp = timestamp
@@ -22,8 +22,25 @@ class Blockchain:
         self.difficulty = 4  # Number of leading zeros required in the hash
 
     def create_genesis_block(self):
+        genesis_block = Block(0, 'Genesis Block', '0', b'', 0)
+
+        genesis_previous_hash_data = calculate_hash('0')
+        time_stamp = int(time.time())
+        genesis_data = 'Genesis Block'
+        proof_of_value = 0
+        hash_data = f"{genesis_previous_hash_data}{time_stamp}{genesis_data}{str(proof_of_value)}"
+        block_hash = calculate_hash(hash_data)
+
+        genesis_block = {
+            'index': 0,
+            'timestamp': int(time.time()),
+            'previous_hash': calculate_hash(genesis_previous_hash_data),
+            'hash': block_hash,
+            'data': genesis_data,
+            'proof_of_value': proof_of_value
+        }
+        return genesis_block
         # TODO: Create and return the genesis block (the first block in the chain)
-        pass
 
     def get_latest_block(self):
         # TODO: Return the latest block in the chain
