@@ -1,4 +1,4 @@
-from datetime import datetime
+from collections import Counter
 import hashlib
 import time
 import asyncio
@@ -43,9 +43,6 @@ tnx = [
     "Transaction C",
     "Transaction D"
 ]
-
-# merkle_root = compute_merkle_root(tnx)
-# print("Merkle Root:", merkle_root)
 
 # Simulate Proof Of Work
 
@@ -109,14 +106,7 @@ async def simulate_pow(miners, block_data, difficulty):
 
     print(f"overall time taken {time_taken}")
 
-# Example Usage
-# miners = 6  # Number of miners
-# block_data = "Block Data"  # Data to be included in the block
-# difficulty = 6  # Number of leading zeros required
-#
-# asyncio.run(simulate_pow(miners, block_data, difficulty))
-
-# Simulate Proof Of Work
+# Simulate Proof Of Stake
 
 TOTAL_TOKENS = 5000
 
@@ -148,7 +138,58 @@ def simulate_pos(validators):
 
     print(f"Overall Time Taken: {time_taken}")
 
-# Example Usage
+
+# Simulate DPoS
+
+def collect_votes(token_holders, delegate_choices):
+    """
+    Allow token holders to vote for delegates.
+    Returns a dictionary mapping each token holder to their chosen delegate.
+    """
+    votes = {}
+
+    for token_holder in token_holders:
+        votes[token_holder] = random.choice(delegate_choices)
+
+    return votes
+
+def simulate_dpos(votes, num_delegates=3):
+    """
+    Simulate Delegated Proof of Stake:
+    - Count votes.
+    - Select top delegates to create blocks.
+    """
+    delegates = {}
+
+    print(votes)
+
+    for voter, vote in votes.items():
+        delegates[vote] = delegates.get(vote, 0) + 1
+
+    delegates = sorted(delegates.items(), key=lambda item: item[1], reverse=True)
+    chosen_delegates = delegates[0:num_delegates]
+
+    print(f"\nTop Delegates {chosen_delegates} have been chosen to create the blocks!")
+
+    print(delegates[0:3])
+
+# Compute Merkle Root using recursion
+
+merkle_root = compute_merkle_root(tnx)
+print("Merkle Root:", merkle_root)
+
+
+# Simulate Proof Of Work
+
+miners = 6  # Number of miners
+block_data = "Block Data"  # Data to be included in the block
+difficulty = 4  # Number of leading zeros required
+
+asyncio.run(simulate_pow(miners, block_data, difficulty))
+
+
+# Simulate Proof Of Stake
+
 validators = {
     "Alice": 100,
     "Bob": 50,
@@ -157,3 +198,19 @@ validators = {
 }
 
 simulate_pos(validators)
+
+# Simulate DPoS and select 3 delegates
+
+# Token holders (voters)
+token_holders = [
+    "Voter1", "Voter2", "Voter3", "Voter4", "Voter5",
+    "Voter6", "Voter7", "Voter8", "Voter9", "Voter10"
+]
+
+# Candidates for delegate
+delegate_candidates = ["Alice", "Bob", "Lee", "Diana"]
+
+# Collect votes randomly for demonstration
+votes = collect_votes(token_holders, delegate_candidates)
+
+simulate_dpos(votes, num_delegates=3)
