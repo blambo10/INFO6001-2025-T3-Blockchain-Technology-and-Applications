@@ -74,8 +74,6 @@ class Blockchain:
                         )
 
     async def proof_of_work(self, index, previous_hash, time_stamp, data):
-        # TODO: Implement the proof-of-work algorithm
-        # Hint: Increment the proof value until the block's hash starts with the required number of leading zeros
         miner_tasks = [asyncio.create_task(self.mine_block(index,
                                                            previous_hash,
                                                            time_stamp,
@@ -88,7 +86,7 @@ class Blockchain:
             raise Exception(msg)
 
         if not hasattr(miner_tasks[0], 'result'):
-            msg = f"Miner task data type is missing result, Block not created"
+            msg = f"miner task data type is missing result, Block not created"
             raise Exception(msg)
 
         proof = miner_tasks[0].result()
@@ -111,20 +109,24 @@ class Blockchain:
             log.error(f"unable to add data to block: {e}")
 
     def is_chain_valid(self):
-        for i, block in enumerate(self.chain):
-            if i == 0:
-                continue
+        try:
+            for i, block in enumerate(self.chain):
+                if i == 0:
+                    continue
 
-            if not hasattr(block, 'previous_hash'):
-                return False
+                if not hasattr(block, 'previous_hash'):
+                    return False
 
-            if not hasattr(self.chain[i - 1], 'hash'):
-                return False
+                if not hasattr(self.chain[i - 1], 'hash'):
+                    return False
 
-            if block.previous_hash != self.chain[i - 1].hash:
-                return False
+                if block.previous_hash != self.chain[i - 1].hash:
+                    return False
 
-        return True
+            return True
+        except Exception as e:
+            log.error(f"unable to validate chain: {e}")
+            return False
 
     async def mine_block(self, index, previous_hash, time_stamp, data):
         valid_proof = False
