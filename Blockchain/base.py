@@ -4,7 +4,9 @@ import asyncio
 import logging
 from utils import sha256
 from const import (GENESIS_BLOCK_DATA,
-                   GENESIS_BLOCK_PREVIOUS_HASH_INPUT)
+                   GENESIS_BLOCK_PREVIOUS_HASH_INPUT,
+
+                   EXIT,)
 
 log = logging
 
@@ -149,18 +151,3 @@ class Blockchain:
             return True
         else:
             return False
-
-# Example Usage
-if __name__ == "__main__":
-    blockchain = Blockchain()
-
-    print("Mining block 1...")
-    blockchain.add_data("Transaction data for Block 1")
-
-    print("Mining block 2...")
-    blockchain.add_data("Transaction data for Block 2")
-
-    print("\nBlockchain validity:", blockchain.is_chain_valid())
-
-    for block in blockchain.chain:
-        print(f"Block {block.index} | Hash: {block.hash} | Previous Hash: {block.previous_hash} | Timestamp: {block.timestamp} | data: {block.data} | Proof: {block.proof}")
