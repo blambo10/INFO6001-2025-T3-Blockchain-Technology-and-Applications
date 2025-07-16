@@ -159,8 +159,8 @@ def load_blockchain(filename):
     except FileNotFoundError:
         return None
 
-# Blockchain Menu Example
-print("\n=== Blockchain Menu ===")
+# blockchain Menu Example
+print("\n=== blockchain Menu ===")
 print("1. Create blockchain")
 print("2. Add a new block")
 print("3. Get Latest Block")

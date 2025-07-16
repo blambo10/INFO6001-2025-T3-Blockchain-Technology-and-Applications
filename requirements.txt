@@ -1,3 +1,4 @@
 pymongo
 pyRAPL
 pandas
+flake8

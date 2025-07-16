@@ -81,7 +81,7 @@ async def simulate_pow(miners, block_data, difficulty):
 
     start_time = time.perf_counter()
 
-    # log.info(f"Simulating Proof of Work - Starting {miners} Blockchain Miners")
+    # log.info(f"Simulating Proof of Work - Starting {miners} blockchain Miners")
     print(f"Simulating Proof of Work")
     print(f"Starting {miners} Blockchain Miners")
     print(f"Difficulty: {difficulty}")
