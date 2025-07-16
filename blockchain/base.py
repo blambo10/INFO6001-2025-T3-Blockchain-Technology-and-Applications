@@ -394,7 +394,8 @@ class Blockchain:
                 log.error(f"unable to validate chain {filename} - "
                           "reverted to original chain")
             else:
-                print(f'\nLoaded blockchain from file {filename} Successfully!')
+                print(f'\nLoaded blockchain '
+                      f'from file {filename} Successfully!')
 
         except Exception as e:
             msg = (f"unable to load blockchain from filename: {filename}"

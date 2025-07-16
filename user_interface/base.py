@@ -20,7 +20,7 @@ class UserInterface:
         self.LOAD_BLOCKCHAIN = LOAD_BLOCKCHAIN
         self.SAVE_BLOCKCHAIN = SAVE_BLOCKCHAIN
         self.EXIT = EXIT
-        self.menu_prompt = ('\n=== blockchain Menu ===\n'
+        self.menu_prompt = ('\n=== Blockchain Menu (INFO6001-2025-T3) ===\n'
                             f'{self.ADD_NEW_BLOCK}. '
                             'Add a new block\n'
                             f'{self.GET_LATEST_BLOCK}. '
@@ -104,6 +104,7 @@ class UserInterface:
                     if blockchain is None:
                         raise Exception(empty_blockchain_msg)
 
+                    print('\n')
                     for block in blockchain.get_blockchain():
                         output = (f'Block {block.index} | '
                                   f'Hash: {block.hash} | '
@@ -119,13 +120,19 @@ class UserInterface:
 
                     print(blockchain.is_chain_valid())
                 case self.LOAD_BLOCKCHAIN:
-                    print('Loading blockchain')
+                    output = ('\n================\n'
+                              'Load blockchain\n'
+                              '================\n')
+                    print(output)
                     filename = input('Enter filename: ')
 
                     blockchain.load_blockchain(filename)
 
                 case self.SAVE_BLOCKCHAIN:
-                    print('Saving blockchain')
+                    output = ('\n================\n'
+                              'Save blockchain\n'
+                              '================\n')
+                    print(output)
                     filename = input('Enter filename: ')
 
                     blockchain.save_blockchain(filename)
