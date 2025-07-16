@@ -40,7 +40,7 @@ class Block:
         self.data = data
         self.proof = proof
 
-        # Allow for hash to be specified in the
+        # [bl] Allow for hash to be specified in the
         # event of loading blockchain back from file,
         # instead of performing hash compute on every re-entry
         if hash is None:

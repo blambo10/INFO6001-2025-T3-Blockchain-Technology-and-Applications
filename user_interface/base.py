@@ -13,6 +13,8 @@ log = logging
 
 class UserInterface:
     def __init__(self):
+        """Create a new UserInterface."""
+
         self.ADD_NEW_BLOCK = ADD_NEW_BLOCK
         self.GET_LATEST_BLOCK = GET_LATEST_BLOCK
         self.DISPLAY_BLOCKCHAIN = DISPLAY_BLOCKCHAIN
@@ -75,6 +77,7 @@ class UserInterface:
         try:
             empty_blockchain_msg = "Block chain empty not found"
 
+            # [bl] process user selection
             match user_input:
                 case self.ADD_NEW_BLOCK:
                     if blockchain is None:
