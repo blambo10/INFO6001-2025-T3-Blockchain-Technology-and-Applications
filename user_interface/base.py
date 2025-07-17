@@ -60,7 +60,7 @@ class UserInterface:
         """Process user selection from menu
 
         Args:
-            user_input (int): The length of the rectangle.
+            user_input (str): The length of the rectangle.
             blockchain (Blockchain): Blockchain containing list of blocks,
                                      Given python passes list around with
                                      the same behaves as pass by ref,
